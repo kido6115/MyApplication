@@ -16,5 +16,17 @@ class AddTest {
         //assert
         assertEquals(expect, actual)
     }
+    @Test
+    fun calculate(){
+        val first = 1
+        val second = 2
+        val addExpect=3
+        val minusExpect=1
+        val add = Add()
+        val actual = add.add(first, second)
+
+        assertEquals(addExpect, actual)
+
+    }
 
 }

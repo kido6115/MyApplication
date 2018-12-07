@@ -15,8 +15,15 @@ class Add : AppCompatActivity() {
         }
     }
 
-     fun add(int1: Int, int2: Int): Int {
+    fun add(int1: Int, int2: Int): Int {
         return int1 + int2
+    }
+
+    fun calculate(type: String, param1: Int, param2: Int) {
+            when(type){
+                "add"-> println(param1+param2)
+                "minus"-> println(param1-param2)
+            }
     }
 }
 
