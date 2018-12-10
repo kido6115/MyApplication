@@ -19,11 +19,13 @@ class Add : AppCompatActivity() {
         return int1 + int2
     }
 
-    fun calculate(type: String, param1: Int, param2: Int) {
+    fun calculate(type: String, param1: Int, param2: Int) :Int {
+        var returnParam=0
             when(type){
-                "add"-> println(param1+param2)
-                "minus"-> println(param1-param2)
+                "add"-> returnParam = param1+param2
+                "minus"-> returnParam = param1-param2
             }
+        return returnParam
     }
 }
 

@@ -23,9 +23,13 @@ class AddTest {
         val addExpect=3
         val minusExpect=1
         val add = Add()
-        val actual = add.add(first, second)
+        var actual = add.calculate("add",first, second)
 
         assertEquals(addExpect, actual)
+         actual = add.calculate("minus",second, first)
+        assertEquals(minusExpect, actual)
+        actual = add.calculate("",second, first)
+        assertEquals(0, actual)
 
     }
 

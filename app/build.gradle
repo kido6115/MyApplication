@@ -5,7 +5,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'jacoco'
 jacoco {
-    toolVersion = "0.7.5"
+    toolVersion = '0.8.1' //Use latest version
+}
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
 }
 android {
     compileSdkVersion 28
@@ -27,36 +30,50 @@ android {
             testCoverageEnabled = true
         }
     }
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+        animationsDisabled true
+
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
+task jacocoUnitTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
-def coverageSourceDirs = [
-        '../app/src/main/java'
-]
+    def coverageSourceDirs = [
+            "**/src/main/java"
+    ]
 
-task jacocoTestReport(type: JacocoReport) {
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/*$ViewInjector*.*',
+            '**/*$ViewBinder*.*',
+            '**/BuildConfig.*',
+            '**/Manifest*.*'
+    ]
+
+    def javaClasses = fileTree(
+            dir: "$buildDir/intermediates/classes/debug",
+            excludes: fileFilter
+    )
+    def kotlinDebugTree = fileTree(
+            dir: "${buildDir}/tmp/kotlin-classes/debug",
+            excludes: fileFilter)
+
+
+    classDirectories = files([javaClasses],[kotlinDebugTree])
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec"
+    ])
+
     reports {
         xml.enabled = true
         html.enabled = true
-    }
-    classDirectories = fileTree(
-            dir: './build/intermediates/classes/debug',
-            excludes: ['**/R*.class',
-                       '**/*$InjectAdapter.class',
-                       '**/*$ModuleAdapter.class',
-                       '**/*$ViewInjector*.class'
-            ])
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files("$buildDir/outputs/code-coverage/connected/flavors/coverage.ec")
-
-    doFirst {
-        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
-        }
     }
 }
 
